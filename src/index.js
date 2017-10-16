@@ -13,32 +13,31 @@ function Square(props) {
 class Board extends React.Component {
 	renderSquare(i) {
 		return (
-			<Square 
+			<Square
+				key={i}
 				value={ this.props.squares[i] }
 				onClick={() => this.props.onClick(i)} />
 		);
 	}
 
 	render() {
-		return(
-			<div>
-				<div className="board-row">
-					{ this.renderSquare(0) }
-					{ this.renderSquare(1) }
-					{ this.renderSquare(2) }
+		let index = 0;
+		let description = [];
+
+		for(let i = 0; i < 3; i++) {
+			let rows = [];
+			for(let j = 0; j < 3; j++) {
+				rows.push(this.renderSquare(index++));
+			}
+
+			description.push((
+				<div className="board-row" key={i}>
+					{ rows.map((square) => square) }
 				</div>
-				<div className="board-row">
-					{ this.renderSquare(3) }
-					{ this.renderSquare(4) }
-					{ this.renderSquare(5) }
-				</div>
-				<div className="board-row">
-					{ this.renderSquare(6) }
-					{ this.renderSquare(7) }
-					{ this.renderSquare(8) }
-				</div>
-			</div>
-		);
+			));
+		}
+		
+		return description;
 	}
 }
 
@@ -76,6 +75,8 @@ class Game extends React.Component {
 			stepNumber: step,
 			xIsNext: (step % 2) === 0
 		});
+
+		this.selectedMove.style.fontWeight = 'bold';
 	}
 
 	render() {
@@ -87,7 +88,12 @@ class Game extends React.Component {
 			const desc = move ? `Go to move # ${move}` : 'Go to game start';
 			return (
 				<li key={move}>
-					<button onClick={() => this.jumpTo(move)}>{desc}</button>
+					<button onClick={(e) => {
+						if(this.selectedMove) this.selectedMove.style.fontWeight = 'normal';
+						this.selectedMove = e.target;
+						this.jumpTo(move);
+					}}>{desc}
+					</button>
 				</li>
 			);
 		});
