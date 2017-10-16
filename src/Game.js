@@ -58,7 +58,6 @@ class Game extends React.Component {
 					<button onClick={(e) => {
 						if(this.selectedMove) this.selectedMove.style.fontWeight = 'normal';
 						this.selectedMove = e.target;
-						this.selectedMoveIndex = currentMove;
 						this.jumpTo(currentMove);
 					}}>{desc}
 					</button>
@@ -66,13 +65,13 @@ class Game extends React.Component {
 			);
 		});
 
-		let status;
-		status = winner ? `Winner: ${winner}` : `Next player: ${this.state.xIsNext ? 'X' : 'O'}`
+		let status = winner ? `Winner: ${winner.player}` : 
+							  `Next player: ${this.state.xIsNext ? 'X' : 'O'}`;
 
 		return(
 			<div className="game">
 				<div className="game-board">
-					<Board squares={current.squares} onClick={(i) => this.handleClick(i)}/>
+					<Board winner={winner} squares={current.squares} onClick={(i) => this.handleClick(i)}/>
 				</div>
 				<div className="game-info">
 					<div>{status}</div>
@@ -99,7 +98,10 @@ function calculateWinner(squares) {
 	for(let i = 0; i < lines.length; i++) {
 		const [a, b, c] = lines[i];
 		if(squares[a] && squares[a] === squares[b] && squares[a] === squares[c])
-			return squares[a];
+			return {
+				player: squares[a],
+				squares: lines[i]
+			};
 	}
 
 	return null;
